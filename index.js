@@ -27,18 +27,17 @@ app.get("/api/hello", function (req, res) {
 app.get("/api/:date", (req, res) => {
   const date_string = req.params.date;
 
-  try {
-    const date = new Date(date_string);
-
+  const date = date_string === "" ? new Date() : new Date(parseInt(date_string));
+  if (date.toUTCString() === "Invalid Date") {
     return res.json({
-      unix: date.valueOf(),
-      utc: date.toUTCString()
-    });
-  } catch {
-    return res.json({
-      error: "Invalid Date"
+      error: date.toUTCString(),
     });
   }
+
+  return res.json({
+    unix: date.valueOf(),
+    utc: date.toUTCString()
+  });
 });
 
 
