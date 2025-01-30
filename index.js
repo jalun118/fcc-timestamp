@@ -23,22 +23,26 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-function isValidDate(d) {
-  return d instanceof Date && !isNaN(d);
+function isInvaliteDate(d) {
+  return d.toUTCString() === "Invalid Date";
 }
 
 app.get("/api/:date", (req, res) => {
-  const date_string = req.params.date;
+  const pDate = req.params.date;
+  let date = new Date(pDate);
 
-  const date = date_string === "" ? new Date() : new Date(parseInt(date_string));
-  if (!isValidDate(date)) {
+  if (isInvaliteDate(date)) {
+    date = new Date(parseInt(pDate));
+  }
+
+  if (isInvaliteDate(date)) {
     return res.json({
       error: "Invalid Date",
     });
   }
 
   return res.json({
-    unix: date.valueOf(),
+    unix: date.getTime(),
     utc: date.toUTCString()
   });
 });
@@ -46,7 +50,7 @@ app.get("/api/:date", (req, res) => {
 app.get("/api", (req, res) => {
   const date = new Date();
   res.json({
-    unix: date.valueOf(),
+    unix: date.getTime(),
     utc: date.toUTCString()
   });
 });
